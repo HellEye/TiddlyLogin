@@ -1,0 +1,20 @@
+.sidebar {
+  min-width: 15vw;
+  background-color: var(--interact-dark);
+  display: flex;
+  flex-direction: column;
+  /* max-height: 90vh; */
+}
+
+.sidebar a {
+  background-color: var(--interact-normal);
+  color: var(--color-main);
+  text-decoration: none;
+  padding: 0.5em 1em;
+  font-size: 1.5rem;
+  transition: background-color 0.15s ease;
+}
+
+.sidebar a:hover {
+  background-color: var(--interact-light);
+}

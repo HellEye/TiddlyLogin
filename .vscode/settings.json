@@ -1,0 +1,10 @@
+{
+  "files.exclude": {
+    ".history": true,
+    ".vscode": true,
+    "client": true,
+    "mongodb": true,
+    "node_modules": true
+  },
+  "workspace.isHidden": true
+}

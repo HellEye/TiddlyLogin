@@ -1,0 +1,30 @@
+{
+	"compilerOptions": {
+		"target": "es6",
+		"module": "commonjs",
+		"moduleResolution": "node",
+		"esModuleInterop": true,
+		"resolveJsonModule": true,
+		"lib": [
+			"es2015"
+		],
+
+		"rootDir": "src",
+		"outDir": "dist",
+
+		"strict": false,
+		"alwaysStrict": false,
+	
+
+		"emitDecoratorMetadata": true,
+		"experimentalDecorators": true,
+		"downlevelIteration": true,
+		"declaration": true,
+
+		"pretty": true
+	},
+	"include": [
+		"typings/**/*",
+		"src/**/*"
+	]
+}

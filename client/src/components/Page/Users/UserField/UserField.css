@@ -1,0 +1,33 @@
+.userField {
+  background: var(--background-main);
+  border: 1px solid var(--accent);
+  border-radius: 1em;
+  padding: 1em 2em;
+  width: 90%;
+  display: flex;
+  flex-direction: row;
+  gap: 2em;
+
+}
+
+
+.userField.editing > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+}
+.userField .editUser {
+  width: 7%;
+  margin-left: auto;
+}
+
+.userField .cancelEdit {
+  width:7%;
+  background-color: rgb(97, 39, 39);
+}
+
+.userField .saveEdit {
+  margin-left: auto;
+  width: 7%;
+  background-color:rgb(30, 99, 24)
+}

@@ -1,0 +1,8 @@
+FROM node
+WORKDIR /client
+COPY package*.json ./
+COPY public ./public
+COPY tsconfig.json ./
+RUN npm install
+CMD [ "npm", "run", "start" ]
+EXPOSE 3000

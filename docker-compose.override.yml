@@ -1,0 +1,36 @@
+version: "3.3"
+services:
+  db:
+    image: "mongo"
+    container_name: "tiddlylogin.mongodb"
+    restart: always
+    ports:
+      - "6063:27017"
+    volumes:
+      - ./mongodb:/data/db
+  node:
+    # image: node
+    build:
+      context: .
+    container_name: tiddlylogin.server
+    restart: always
+    ports:
+      - 6062:5000
+    depends_on:
+      - db
+    links:
+      - db:db
+  react:
+    # image: node
+    build:
+      context: ./client
+    container_name: tiddlylogin.react
+    restart: always
+    environment:
+      PORT: 6061
+    ports:
+      - 6061:6061
+    depends_on:
+      - node
+    links:
+      - node:node

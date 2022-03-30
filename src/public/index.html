@@ -1,0 +1,70 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Control panel ish</title>
+</head>
+<body>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      transition: background-color 0.1s ease;
+    }
+    :root {
+      --main-text: #ccc;
+      --main-bg: #336;
+      --body-bg: #224;
+      --button-bg: #225;
+      --button-bg-hover: #223;
+      --boder: #55c;
+      --accent: #ca8318;
+    }
+    html, body {
+      background-color: var(--body-bg);
+      color: var(--main-text);
+    }
+    h1, h2, h3 {
+      margin-top: 0.5em;
+      margin-bottom: 0.7em;
+    }
+    .wrapper {
+      padding: 2em;
+      background-color: var(--main-bg);
+      border: 2px solid var(--boder);
+      border-radius: 2em;
+      margin: 2em;
+      display: flex;
+      flex-direction: column;
+    }
+    #userList {
+      list-style: none;
+    }
+  </style>
+
+  <div class="wrapper">
+    <h1>Control panel </h1>
+    <h2>Users: </h2>
+    <ul id="userList">
+
+    </ul>
+  </div>
+  <script>
+    const getUsers = async () =>{
+      const users = await (await fetch("/users")).json()
+        
+      return users.map(u=>`<li>${u.username}</li>`).join("")
+    }
+
+    const setUsers = async () =>{
+      const users = await getUsers()
+      console.log(users)
+      document.getElementById("userList").innerHTML=users
+    }
+
+    setUsers()
+  </script>
+</body>
+</html>

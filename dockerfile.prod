@@ -1,0 +1,5 @@
+FROM node
+WORKDIR /server
+COPY ./dist .
+CMD [ "node", "dist/index.js" ]
+EXPOSE 5000

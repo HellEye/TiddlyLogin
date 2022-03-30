@@ -1,0 +1,5 @@
+FROM node
+WORKDIR /client
+COPY ./build ./
+CMD ["npm", "run", "serve"]
+EXPOSE 3000

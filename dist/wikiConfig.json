@@ -1,0 +1,8 @@
+{
+    "schoolnotes": {
+        "port": 9008
+    },
+    "wotr": {
+        "port": 9009
+    }
+}
