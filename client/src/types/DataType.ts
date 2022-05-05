@@ -1,5 +1,3 @@
-import { User } from "./User"
-
 export interface DataType {
 	_id: string
 }

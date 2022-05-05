@@ -1,10 +1,19 @@
 {
   "files.exclude": {
-    ".history": true,
-    ".vscode": true,
-    "client": true,
-    "mongodb": true,
-    "node_modules": true
+    ".history": false,
+    ".vscode": false,
+    "client": false,
+    "mongodb": false,
+    "node_modules": false
   },
-  "workspace.isHidden": true
+  "workspace.isHidden": false,
+  "formatFiles.excludedFolders": [
+    "node_modules",
+    ".vscode",
+    ".git",
+    "dist",
+    ".chrome",
+    "client",
+    ".history"
+  ]
 }

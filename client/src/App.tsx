@@ -1,15 +1,37 @@
 import React from "react"
-import "./App.css"
 import { UserContextProvider, useUserContext } from "./context/UserContext"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
-import { useCookies, CookiesProvider } from "react-cookie"
+import { CookiesProvider } from "react-cookie"
+import { ChakraProvider } from "@chakra-ui/react"
 import { Login, Header, UserList, Sidebar, WikiList } from "./components"
-import TestPage from './components/Page/TestPage/TestPage';
+import TestPage from "./pages/TestPage/TestPage"
+import { chakraTheme } from "./theme/chakraTheme"
+import { QueryClient, QueryClientProvider } from "react-query"
+import { ReactQueryDevtools } from "react-query/devtools"
+import { queryFnGet } from "./util/queryFunctions"
+import Page from "./components/Page/Page"
+
+const queryClient = new QueryClient({
+	defaultOptions: {
+		queries: {
+			queryFn: queryFnGet,
+		},
+	},
+})
+
 function AppWrapper() {
+	// console.log(chakraTheme)
 	return (
 		<CookiesProvider>
 			<UserContextProvider>
-				<App />
+				<QueryClientProvider client={queryClient}>
+					<BrowserRouter>
+						<ChakraProvider theme={chakraTheme}>
+							<App />
+							<ReactQueryDevtools initialIsOpen={true} />
+						</ChakraProvider>
+					</BrowserRouter>
+				</QueryClientProvider>
 			</UserContextProvider>
 		</CookiesProvider>
 	)
@@ -19,24 +41,21 @@ const App = () => {
 	const { user } = useUserContext()
 	return (
 		<div className="App">
-			<BrowserRouter>
-				<Header />
-				<div className="content">
-					<Sidebar />
-					{/* Landing page */}
-					{!user ? (
-						<Login />
-					) : (
-						<Routes>
-							<Route path="/" />
-							<Route path="/users" element={<UserList />} />
-							<Route path="/wikis" element={<WikiList />} />
-							<Route path="/testPage" element={<TestPage />} />
-							
-						</Routes>
-					)}
-				</div>
-			</BrowserRouter>
+			<Header />
+			<div className="content">
+				<Sidebar />
+				{/* Landing page */}
+				{!user ? (
+					<Login />
+				) : (
+					<Routes>
+						<Route path="/" element={<Page />} />
+						<Route path="/users" element={<UserList />} />
+						<Route path="/wikis" element={<WikiList />} />
+						<Route path="/testPage" element={<TestPage />} />
+					</Routes>
+				)}
+			</div>
 		</div>
 	)
 }

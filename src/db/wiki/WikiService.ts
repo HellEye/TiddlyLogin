@@ -1,33 +1,78 @@
+import { Error } from "mongoose"
 import { Wikis } from ".."
+import { NotFoundError } from "../../types/Errors"
+import { userService } from '../users';
 type WikiInput = {
-  name?: string
-  address?: string
+  _id?: string
+	name?: string
+	address?: string
   public?: boolean
+  subdomain?: string
 }
 class WikiService {
 	async findWiki(_id: string) {
-			const out = await Wikis.findOne({ _id })
-			return out
+		try {
+			return await Wikis.findOne({ _id })
+		} catch (e) {
+			if (e instanceof Error.DocumentNotFoundError)
+				throw new NotFoundError("Wiki not found", "Wiki")
+		}
+	}
+
+	async getWikiList() {
+		return await Wikis.find({})
+	}
+
+	async createWiki(wiki: WikiInput) {
+    try {
+      wiki._id = undefined
+			return await Wikis.create(wiki)
+		} catch (e) {
+			if (e instanceof Error.DocumentNotFoundError)
+        throw new NotFoundError("Wiki not found", "Wiki")
+      throw e
+		}
+	}
+
+	async updateWiki(_id: string, wiki: WikiInput) {
+    try {
+      wiki._id = undefined
+			return await Wikis.updateOne({ _id }, wiki)
+		} catch (e) {
+			if (e instanceof Error.DocumentNotFoundError)
+				throw new NotFoundError("Wiki not found", "Wiki")
+		}
+	}
+
+	async removeWiki(_id: string) {
+		try {
+			return await Wikis.deleteOne({ _id })
+		} catch (e) {
+			if (e instanceof Error.DocumentNotFoundError)
+				throw new NotFoundError("Wiki not found", "Wiki")
+		}
+	}
+
+  async getWikisEditable(userId: string) {
+    try {
+      const user = await userService.getUser(userId)
+      return await Wikis.find({_id: {$in: user.editWikis}})
+    } catch (e) {
+      if (e instanceof Error.DocumentNotFoundError)
+        throw new NotFoundError("Specified wikis not found", "Wiki")
+    }
   }
-  
-  async getWikiList(_id: string) {
-    const out = await Wikis.find({}, {_id})
+
+  async getWikisBrowseable(userId: string) {
+    try {
+      const user = await userService.getUser(userId)
+      return await Wikis.find({_id: {$in: user.browseWikis}})
+
+    } catch (e) {
+      if (e instanceof Error.DocumentNotFoundError)
+        throw new NotFoundError("Specified wikis not found", "Wiki")
+    }
   }
-
-  async createWiki(wiki: WikiInput) {
-    const out = await Wikis.create(wiki)
-    return out
-	}
-
-  async updateWiki(_id: string, wiki: WikiInput) {
-    const out = await Wikis.updateOne({ _id }, wiki)
-    return out
-	}
-
-  async removeWiki(_id: string) {
-    const out = await Wikis.deleteOne({ _id })
-    return out
-	}
 }
 const wikiService = new WikiService()
 export { wikiService }

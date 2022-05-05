@@ -1,4 +1,4 @@
-import { User, userService, createUserEndpoints } from "./users"
+import { User, userService, createUserEndpoints, userAuthService } from "./users"
 import {Wiki, wikiService, createWikiEndpoints} from "./wiki"
 import { Token, tokenService } from "./tokens"
 import connectToMongo from "./connect"
@@ -16,6 +16,7 @@ const createEndpoints = (app: Express) => {
 export {
   connectToMongo,
   userService,
+  userAuthService,
   tokenService,
   wikiService,
   createEndpoints

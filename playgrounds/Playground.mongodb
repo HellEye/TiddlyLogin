@@ -6,3 +6,5 @@ use("wikiUsers");
 
 
 // db.tokens.find({})//One({token: "29b6f99a7fca0e127ba1ca5d66eeecd8731ea0ff4f2d6fdf"})
+
+db.users.find({})
