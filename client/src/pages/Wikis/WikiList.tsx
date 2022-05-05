@@ -3,17 +3,13 @@ import {
 	Button,
 	Checkbox,
 	Heading,
-	useOutsideClick,
 } from "@chakra-ui/react"
-import { useRef, useState } from "react"
-import { useQuery } from "react-query"
 import FormMap from "../../components/Form/FormMap"
 import DivisiblePage from "../../components/Layout/DivisiblePage"
 import Page from "../../components/Page/Page"
 import useDataTypeList from "../../hooks/useDataTypeList"
-import { DataType, Wiki } from "../../types"
+import { Wiki } from "../../types"
 import { defaultWiki } from "../../types/Wiki"
-import { usePost } from "../../util/queryFunctions"
 import { field, InputFieldsType } from "../../util/textField"
 import WikiField from "./WikiField/WikiField"
 
