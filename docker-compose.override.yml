@@ -1,5 +1,11 @@
 version: "3.3"
 services:
+  redis:
+    image: "redis"
+    container_name: "tiddlylogin.redis"
+    restart: always
+    ports: 
+      - "6064:6379"
   db:
     image: "mongo"
     container_name: "tiddlylogin.mongodb"
@@ -18,8 +24,10 @@ services:
       - 6062:5000
     depends_on:
       - db
+      - redis
     links:
       - db:db
+      - redis:redis
   react:
     # image: node
     build:

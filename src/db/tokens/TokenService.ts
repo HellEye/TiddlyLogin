@@ -4,6 +4,7 @@ import { randomBytes } from "crypto"
 import { Token } from "./TokenSchema"
 import { Error } from "mongoose"
 import { NotFoundError } from "../../types/Errors"
+import util from "util"
 class TokenService {
 	async findToken(token: string) {
 		try {
