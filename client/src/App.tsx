@@ -10,6 +10,7 @@ import { QueryClient, QueryClientProvider } from "react-query"
 import { ReactQueryDevtools } from "react-query/devtools"
 import { queryFnGet } from "./util/queryFunctions"
 import Page from "./components/Page/Page"
+import Home from "./pages/Home/Home"
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -49,7 +50,7 @@ const App = () => {
 					<Login />
 				) : (
 					<Routes>
-						<Route path="/" element={<Page />} />
+						<Route path="/" element={<Home />} />
 						<Route path="/users" element={<UserList />} />
 						<Route path="/wikis" element={<WikiList />} />
 						<Route path="/testPage" element={<TestPage />} />

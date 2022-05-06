@@ -4,6 +4,7 @@ import {
 	MutationOptions,
 	QueryFunctionContext,
 	QueryKey,
+	ResultOptions,
 	useMutation,
 	useQueryClient,
 } from "react-query"
@@ -15,9 +16,8 @@ export function postFunction<
 	Input extends DataType = Result
 >(queryKey: QueryKey): MutationFunction<Result, Input> {
 	return async (data: Input) => {
-		data._id = ""
 		const res = await axios.post<Result>(
-			`/api/${queryKey[0]}/${queryKey.length > 1 ? queryKey[1] : ""}`
+			`/api/${queryKey[0]}/${queryKey.length > 1 ? queryKey[1] : ""}`, data
 		)
 
 		return res.data
@@ -33,17 +33,35 @@ export const queryFnGet = async <Result extends DataType>({
 	return res.data
 }
 
+export const queryFnGetArr = async<Result extends DataType>({
+  queryKey,
+}: QueryFunctionContext): Promise<Result[]> => {
+  const res = await axios.get<Result[]>(
+		`/api/${Array.isArray(queryKey) ? queryKey.join("/") : queryKey}`
+  )
+  return res.data
+}
+
+type ExtendedMutationOptions<Result, Error, Input> = MutationOptions<Result, Error, Input> & {
+  invalidate?: QueryKey[]
+}
+
 export function usePost<
 	Result extends DataType,
 	Input extends DataType = Result
->(name: QueryKey, options?: MutationOptions<Result, Error, Input>) {
+>(name: QueryKey, options?: ExtendedMutationOptions<Result, Error, Input>) {
 	const queryClient = useQueryClient()
 	return useMutation<Result, Error, Input>(
 		Array.isArray(name) ? name.join("/") : name + " Post",
 		postFunction<Result, Input>(name),
 		{
-			onSuccess: () => {
-				queryClient.invalidateQueries(name)
+      onSuccess: () => {
+        queryClient.invalidateQueries(name)
+        if (options?.invalidate) {
+          options.invalidate.forEach(opt => {
+            queryClient.invalidateQueries(opt)
+          })
+        }
 			},
 			...options,
 		}

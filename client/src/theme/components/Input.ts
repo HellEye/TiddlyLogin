@@ -25,9 +25,17 @@ const Input = {
 		},
 	},
 }
+const Textarea = {
+  defaultProps: {
+    variant: "base"
+  },
+  baseStyle: {
+    ...Input.baseStyle.field
+  }
+}
 
 const Select = {
 	...Input,
 }
 
-export { Input, Select }
+export { Input, Select, Textarea }

@@ -1,4 +1,4 @@
-import { Checkbox, Input, Select } from "@chakra-ui/react"
+import { Checkbox, Input, Select, Textarea } from "@chakra-ui/react"
 import { DataType } from "../types"
 
 /* 
@@ -19,7 +19,7 @@ export type InputFieldsType<T> = {
 	selectOptions: string[]
 }
 
-type AcceptedComponents = typeof Input | typeof Select | typeof Checkbox
+type AcceptedComponents = typeof Input | typeof Select | typeof Checkbox | typeof Textarea
 
 type OptionsObject = {
 	type?: string

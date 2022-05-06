@@ -3,6 +3,7 @@ import {
 	Button,
 	Checkbox,
 	Heading,
+  Textarea,
 } from "@chakra-ui/react"
 import FormMap from "../../components/Form/FormMap"
 import DivisiblePage from "../../components/Layout/DivisiblePage"
@@ -19,7 +20,8 @@ const inputFields: InputFieldsType<Wiki>[] = [
 	field("name"),
 	field("address"),
 	field("public", { component: Checkbox }),
-	field("subdomain"),
+  field("subdomain"),
+  field("description", {component: Textarea})
 ]
 
 const WikiList = (props: Props) => {
@@ -58,7 +60,8 @@ const WikiList = (props: Props) => {
 					<FormMap
 						fields={inputFields}
 						queryKey={"wiki"}
-						addIdToQuery
+            addIdToQuery
+            invalidate={[["userwiki"]]}
 						defaultValue={defaultWiki}
 						data={editIndex > -1 ? data?.[editIndex] : undefined}
 						onClose={() => setEditIndex(-1)}

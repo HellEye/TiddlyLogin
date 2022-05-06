@@ -14,5 +14,12 @@ export class Wiki {
 	public: boolean
 
 	@prop({ required: true })
-	subdomain: string
+  subdomain: string
+  
+  @prop()
+  description: string
+}
+
+export type WikiWithPermission = Wiki & {
+  canEdit: boolean
 }

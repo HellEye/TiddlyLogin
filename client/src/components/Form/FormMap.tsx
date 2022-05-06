@@ -17,7 +17,8 @@ import { QueryKey } from "react-query"
 type Props<T extends DataType> = {
 	fields: InputFieldsType<T>[]
 	queryKey: QueryKey
-	data?: Partial<T>
+  data?: Partial<T>
+  invalidate?:QueryKey[]
 	defaultValue: T
 	onClose?: () => void
 	addIdToQuery?: boolean
@@ -27,7 +28,8 @@ function FormMap<T extends DataType>({
 	fields,
 	queryKey,
 	defaultValue,
-	data,
+  data,
+  invalidate,
 	onClose,
 	addIdToQuery,
 }: Props<T>) {
@@ -38,7 +40,7 @@ function FormMap<T extends DataType>({
 		}
 		return q as QueryKey
 	}
-	const { mutateAsync, isLoading } = usePost<T>(makeQueryKey())
+	const { mutateAsync, isLoading } = usePost<T>(makeQueryKey(), {invalidate})
 	if (!queryKey) {
 		return <Box></Box>
 	}
@@ -119,7 +121,7 @@ function FormMap<T extends DataType>({
 							>
 								{isLoading ? (
 									<>
-										Saving <Spinner />{" "}
+										Saving <Spinner ml="5"/>{" "}
 									</>
 								) : (
 									"Save"

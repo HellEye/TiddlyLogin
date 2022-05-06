@@ -7,6 +7,7 @@ type WikiInput = {
 	name?: string
 	address?: string
   public?: boolean
+  description?: string
   subdomain?: string
 }
 class WikiService {
@@ -17,10 +18,18 @@ class WikiService {
 			if (e instanceof Error.DocumentNotFoundError)
 				throw new NotFoundError("Wiki not found", "Wiki")
 		}
-	}
+  }
+  async findWikiByName(name: string) {
+    try {
+      return await Wikis.findOne({name})
+    } catch (e) {
+      if (e instanceof Error.DocumentNotFoundError)
+        throw new NotFoundError("Wiki not found", "Wiki")
+    }
+  }
 
 	async getWikiList() {
-		return await Wikis.find({})
+		return await Wikis.find({}).lean()
 	}
 
 	async createWiki(wiki: WikiInput) {
