@@ -1,5 +1,5 @@
 import { User } from "../../../types/User"
-import { Button, Flex, Heading } from "@chakra-ui/react"
+import { Button, Flex, Heading, Hide, Show } from "@chakra-ui/react"
 type Props = {
 	user: User
 	onSelectForEdit: () => void
@@ -23,8 +23,10 @@ const UserField = ({ user, onSelectForEdit }: Props) => {
 				},
 			}}
 		>
-			<Heading size="md">{user.username}</Heading>
-			<Heading size="sm">{user.permissionLevel}</Heading>
+      <Heading size="md">{user.username}</Heading>
+      <Hide below="container.md">
+        <Heading size="sm">{user.permissionLevel}</Heading>
+      </Hide>
 			<Button
 				onClick={() => {
 					onSelectForEdit()

@@ -2,8 +2,9 @@ import {
 	Box,
 	Button,
 	Checkbox,
+	Flex,
 	Heading,
-  Textarea,
+	Textarea,
 } from "@chakra-ui/react"
 import FormMap from "../../components/Form/FormMap"
 import DivisiblePage from "../../components/Layout/DivisiblePage"
@@ -11,18 +12,20 @@ import Page from "../../components/Page/Page"
 import useDataTypeList from "../../hooks/useDataTypeList"
 import { Wiki } from "../../types"
 import { defaultWiki } from "../../types/Wiki"
-import { field, InputFieldsType } from "../../util/textField"
+import { field, InputFields } from "../../util/textField"
 import WikiField from "./WikiField/WikiField"
 
 type Props = {}
 
-const inputFields: InputFieldsType<Wiki>[] = [
-	field("name"),
-	field("address"),
-	field("public", { component: Checkbox }),
-  field("subdomain"),
-  field("description", {component: Textarea})
-]
+const inputFields: InputFields<Wiki> = {
+	fields: [
+		field("name"),
+		field("address"),
+		field("public", { component: Checkbox }),
+		field("subdomain"),
+		field("description", { component: Textarea }),
+	],
+}
 
 const WikiList = (props: Props) => {
 	const { createNew, data, isLoading, editIndex, setEditIndex } =
@@ -52,7 +55,10 @@ const WikiList = (props: Props) => {
 	}
 	return (
 		<Page>
-			<Heading> Wiki list </Heading>
+			<Flex direction="row" gap="5rem">
+				<Heading>Wiki list</Heading>
+				<Button onClick={createNew}>Add new wiki</Button>
+			</Flex>
 
 			<DivisiblePage
 				open={editIndex > -1}
@@ -60,8 +66,8 @@ const WikiList = (props: Props) => {
 					<FormMap
 						fields={inputFields}
 						queryKey={"wiki"}
-            addIdToQuery
-            invalidate={[["userwiki"]]}
+						addIdToQuery
+						invalidate={[["userwiki"]]}
 						defaultValue={defaultWiki}
 						data={editIndex > -1 ? data?.[editIndex] : undefined}
 						onClose={() => setEditIndex(-1)}

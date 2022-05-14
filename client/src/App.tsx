@@ -9,7 +9,6 @@ import { chakraTheme } from "./theme/chakraTheme"
 import { QueryClient, QueryClientProvider } from "react-query"
 import { ReactQueryDevtools } from "react-query/devtools"
 import { queryFnGet } from "./util/queryFunctions"
-import Page from "./components/Page/Page"
 import Home from "./pages/Home/Home"
 
 const queryClient = new QueryClient({
@@ -43,8 +42,9 @@ const App = () => {
 	return (
 		<div className="App">
 			<Header />
-			<div className="content">
-				<Sidebar />
+      <div className="content">
+        {user?.permissionLevel==="admin" ? <Sidebar /> : ""}
+				
 				{/* Landing page */}
 				{!user ? (
 					<Login />

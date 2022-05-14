@@ -1,4 +1,3 @@
-import { ButtonProps } from "@chakra-ui/react"
 
 const Button = {
 	defaultProps: {

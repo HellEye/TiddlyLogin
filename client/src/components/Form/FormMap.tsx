@@ -1,24 +1,29 @@
-import { Field, Formik } from "formik"
+import { Field, Formik, FormikProps } from "formik"
 import {
 	Box,
 	Button,
 	Flex,
-	FormControl,
-	FormLabel,
 	Input,
-	Select,
 	Spinner,
+	Tab,
+	TabList,
+	TabPanel,
+	TabPanels,
+	Tabs,
 } from "@chakra-ui/react"
-import { InputFieldsType } from "../../util/textField"
+import { InputFields } from "../../util/textField"
 import { DataType } from "../../types/DataType"
 import { usePost } from "../../util/queryFunctions"
 import { QueryKey } from "react-query"
-
+import { useUserContext } from "../../context/UserContext"
+import { useEffect, useRef } from "react"
+import FormMapField from "./FormMapField"
+import FormMapArrayField from './FormMapArrayField';
 type Props<T extends DataType> = {
-	fields: InputFieldsType<T>[]
+	fields: InputFields<T>
 	queryKey: QueryKey
-  data?: Partial<T>
-  invalidate?:QueryKey[]
+	data?: Partial<T>
+	invalidate?: QueryKey[]
 	defaultValue: T
 	onClose?: () => void
 	addIdToQuery?: boolean
@@ -28,11 +33,13 @@ function FormMap<T extends DataType>({
 	fields,
 	queryKey,
 	defaultValue,
-  data,
-  invalidate,
+	data,
+	invalidate,
 	onClose,
 	addIdToQuery,
 }: Props<T>) {
+	const { user } = useUserContext()
+	const formikRef = useRef<FormikProps<T>>(null)
 	const makeQueryKey = () => {
 		const q = typeof queryKey === "string" ? [queryKey] : [...queryKey]
 		if (addIdToQuery) {
@@ -40,7 +47,12 @@ function FormMap<T extends DataType>({
 		}
 		return q as QueryKey
 	}
-	const { mutateAsync, isLoading } = usePost<T>(makeQueryKey(), {invalidate})
+	useEffect(() => {
+		formikRef.current?.resetForm({
+			values: { ...defaultValue, ...data },
+		})
+	}, [data, defaultValue])
+	const { mutateAsync, isLoading } = usePost<T>(makeQueryKey(), { invalidate })
 	if (!queryKey) {
 		return <Box></Box>
 	}
@@ -49,14 +61,15 @@ function FormMap<T extends DataType>({
 	}
 	return (
 		<Formik
+			innerRef={formikRef}
 			initialValues={{ ...defaultValue, ...data }}
 			onSubmit={async (values) => {
-				// console.log("values: ", values)
+				console.log("values: ", values)
 				await mutateAsync(values)
 				if (onClose) onClose()
-			}}
+      }}
 		>
-			{({ handleSubmit, submitForm }) => (
+			{({ handleSubmit, submitForm, resetForm, setFieldValue }) => (
 				<form onSubmit={handleSubmit}>
 					<Field
 						as={Input}
@@ -66,78 +79,82 @@ function FormMap<T extends DataType>({
 						id="_id"
 						type="text"
 					></Field>
-					<Flex direction="column" gap="1em" align="flex-start">
-						{fields.map((f) => {
-							return (
-								<FormControl
-									key={f.name}
-									display="flex"
-									flexDir="column"
-									alignItems="left"
-								>
-									<FormLabel
-										mb="0"
-										w="15rem"
-										htmlFor={f.name}
-										fontSize="smaller"
-									>
-										{f.text}
-									</FormLabel>
-									<Field
-										as={f.component}
-										textAlign="left"
-										name={f.name}
-										id={f.name}
-										type={f.type}
-										children={
-											f.component === Select && f.selectOptions
-												? f.selectOptions.map((so) => {
-														return (
-															<option value={so} key={so}>
-																{so}
-															</option>
-														)
-												  })
-												: undefined
-										}
-									/>
-								</FormControl>
-							)
-						})}
-						<Flex
-							direction="row"
-							gap="1em"
-							justify="stretch"
-							align="stretch"
-							w="100%"
-						>
-							<Button
-								disabled={isLoading}
-								w="100%"
-								colorScheme="confirm"
-								onClick={() => {
-									submitForm()
-								}}
-							>
-								{isLoading ? (
-									<>
-										Saving <Spinner ml="5"/>{" "}
-									</>
-								) : (
-									"Save"
-								)}
-							</Button>
-							<Button
-								w="50%"
-								colorScheme="error"
-								onClick={() => {
-									if (onClose) onClose()
-								}}
-							>
-								Close
-							</Button>
-						</Flex>
-					</Flex>
+					<Tabs colorScheme="accent" variant="enclosed">
+						<TabList>
+							{(typeof fields.tabs === "function"
+								? fields.tabs(user)
+								: fields.tabs
+							)?.map((tab) => (
+								<Tab key={tab}>{tab}</Tab>
+							))}
+						</TabList>
+						<TabPanels>
+							{(fields.tabs
+								? typeof fields.tabs === "function"
+									? fields.tabs(user)
+									: fields.tabs
+								: [""]
+							).map((tab) => {
+								return (
+									<TabPanel key={tab}>
+										<Flex direction="column" gap="1em" align="flex-start">
+											{fields.fields.map((f) => {
+												// console.log(f.name, f.shouldDisplay({...defaultValue, ...data}, user))
+                        if (f.tab && f.tab !== tab) return ""
+                        if (f.array) return (<FormMapArrayField
+                          f={f}
+                          setFieldValue={setFieldValue}
+                          key={f.name}
+                        />)
+												return (
+													<FormMapField
+                            f={f}
+                            key={f.name}
+														user={user}
+														data={{ ...defaultValue, ...data }}
+													/>
+												)
+											})}
+
+											<Flex
+												direction="row"
+												gap="1em"
+												justify="stretch"
+												align="stretch"
+												w="100%"
+											>
+												<Button
+													disabled={isLoading}
+													w="100%"
+													colorScheme="confirm"
+													onClick={() => {
+														submitForm()
+													}}
+												>
+													{isLoading ? (
+														<>
+															Saving <Spinner ml="5" />{" "}
+														</>
+													) : (
+														"Save"
+													)}
+												</Button>
+												<Button
+													w="50%"
+													colorScheme="error"
+													onClick={() => {
+														if (onClose) onClose()
+													}}
+												>
+													Close
+												</Button>
+											</Flex>
+										</Flex>
+									</TabPanel>
+								)
+							})}
+						</TabPanels>
+					</Tabs>
 				</form>
 			)}
 		</Formik>

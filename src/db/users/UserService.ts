@@ -3,7 +3,7 @@ import { Error, QueryWithHelpers } from "mongoose"
 import { NotFoundError } from "../../types/Errors"
 import { tokenService, DAY_IN_MILLISECONDS } from "../tokens"
 import { Users } from ".."
-import {User} from "."
+import { User } from "."
 import { CookieOptions, Request, Response } from "express"
 import { PermissionLevel, userAuthService } from "."
 import { AccessPermissionLevel } from "./UserAuthService"
@@ -15,6 +15,8 @@ type UpdateUserInput = {
 	newPassword?: string
 	currentPassword?: string
 	permissionLevel?: string
+	browseWikis?: string[]
+	editWikis?: string[]
 }
 class UserService {
 	async getAllUsers() {
@@ -38,26 +40,32 @@ class UserService {
 			if (!userToUpdate.isPasswordMatching(user.currentPassword))
 				throw new UnauthorizedError("Provided password doesn't match")
 		}
-		userToUpdate.update({
-			$set: {
-				username: user.username,
-				password: user.newPassword,
-				permissionLevel: user.permissionLevel,
+		const updated = await Users.findByIdAndUpdate(
+			_id,
+			{
+				$set: {
+					username: user.username,
+					password: user.newPassword,
+					permissionLevel: user.permissionLevel,
+					browseWikis: user.browseWikis,
+					editWikis: user.editWikis,
+				},
 			},
-		})
-		return userToUpdate
+			{ new: true }
+		)
+		console.log("Updated user: ", updated)
+		return updated
 	}
 
-  async getUser(_id: string) {
-    try {
-      const out = await Users.findOne({ _id }, { password: 0 })
-      if (!out)
-        throw new Error.DocumentNotFoundError("Document not found")
-      return out
-    } catch (e) {
-      if(e instanceof Error.DocumentNotFoundError)
-        throw new NotFoundError("User with given id not found", "User")
-    }
+	async getUser(_id: string) {
+		try {
+			const out = await Users.findOne({ _id }, { password: 0 })
+			if (!out) throw new Error.DocumentNotFoundError("Document not found")
+			return out
+		} catch (e) {
+			if (e instanceof Error.DocumentNotFoundError)
+				throw new NotFoundError("User with given id not found", "User")
+		}
 	}
 	async getUserList() {
 		return await Users.find({}, { _id: 1 })
@@ -81,31 +89,31 @@ class UserService {
 		return newUser
 	}
 
-  async deleteUser(username: string) {
-    try {
-      await Users.deleteOne({ username })
-    } catch (e) {
-      if(e instanceof Error.DocumentNotFoundError)
-        throw new NotFoundError("Username not found", "Username")
-    }
-  }
-  
-  async getUsersForWikiEdit(wikiId: string) {
-    try {
-      return await Users.find({editWikis: wikiId})
-    } catch (e) {
-      if (e instanceof Error.DocumentNotFoundError)
-        throw new NotFoundError("No users found", "User")
-    }
-  }
-  async getUsersForWikiBrowse(wikiId: string) {
-    try {
-      return await Users.find({browseWikis: wikiId})
-    } catch (e) {
-      if (e instanceof Error.DocumentNotFoundError)
-        throw new NotFoundError("No users found", "User")
-    }
-  }
+	async deleteUser(username: string) {
+		try {
+			await Users.deleteOne({ username })
+		} catch (e) {
+			if (e instanceof Error.DocumentNotFoundError)
+				throw new NotFoundError("Username not found", "Username")
+		}
+	}
+
+	async getUsersForWikiEdit(wikiId: string) {
+		try {
+			return await Users.find({ editWikis: wikiId })
+		} catch (e) {
+			if (e instanceof Error.DocumentNotFoundError)
+				throw new NotFoundError("No users found", "User")
+		}
+	}
+	async getUsersForWikiBrowse(wikiId: string) {
+		try {
+			return await Users.find({ browseWikis: wikiId })
+		} catch (e) {
+			if (e instanceof Error.DocumentNotFoundError)
+				throw new NotFoundError("No users found", "User")
+		}
+	}
 }
 
 const userService = new UserService()

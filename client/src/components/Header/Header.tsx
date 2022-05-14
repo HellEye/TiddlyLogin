@@ -7,10 +7,9 @@ import {
 	MenuButton,
 	MenuItem,
 	MenuList,
-	Spacer,
 	Text,
 } from "@chakra-ui/react"
-import { HamburgerIcon, ArrowDownIcon } from "@chakra-ui/icons"
+import { ArrowDownIcon } from "@chakra-ui/icons"
 import React, { useState } from "react"
 import { useUserContext } from "../../context/UserContext"
 

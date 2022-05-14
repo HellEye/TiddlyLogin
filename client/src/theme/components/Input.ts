@@ -26,16 +26,41 @@ const Input = {
 	},
 }
 const Textarea = {
-  defaultProps: {
-    variant: "base"
-  },
-  baseStyle: {
-    ...Input.baseStyle.field
-  }
+	defaultProps: {
+		variant: "base",
+	},
+	baseStyle: {
+		...Input.baseStyle.field,
+	},
 }
 
 const Select = {
 	...Input,
 }
 
-export { Input, Select, Textarea }
+const Menu = {
+	defaultProps: {
+		variant: "base",
+	},
+	variants: {
+		base: {
+      list: {
+        border: "1px solid",
+        borderColor: "accent.500",
+				bgColor: "bg.500",
+      },
+      item: {
+        bg: "bg.500",
+        bgColor: "bg.500",
+        _hover: {
+          bgColor: "bg.600"
+        },
+        _active: {
+          bgColor: "bg.700"
+        }
+      }
+		},
+	},
+}
+
+export { Input, Select, Textarea, Menu }

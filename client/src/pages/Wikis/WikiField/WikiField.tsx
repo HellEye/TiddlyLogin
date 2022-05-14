@@ -1,7 +1,6 @@
 import React from "react"
-import { Box, Button, Flex, Heading } from "@chakra-ui/react"
+import { Button, Flex, Heading, Hide } from "@chakra-ui/react"
 import { Wiki } from "../../../types"
-import { QueryKey, useQuery } from "react-query"
 
 type Props = {
 	onSelectForEdit: () => void
@@ -27,7 +26,9 @@ const WikiField = ({ wiki, onSelectForEdit }: Props) => {
 			}}
 		>
 			<Heading size="md">{wiki.name}</Heading>
-			<Heading size="sm"> at {wiki.address} </Heading>
+			<Hide below="container.md">
+				<Heading size="sm"> at {wiki.address} </Heading>
+			</Hide>
 			<Button w="5rem" onClick={onSelectForEdit}>
 				Edit
 			</Button>

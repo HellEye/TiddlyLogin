@@ -4,7 +4,8 @@ export interface User extends DataType {
 	username: string
 	permissionLevel: string
 	browseWikis: string[]
-	editWikis: string[]
+  editWikis: string[]
+  password?: string
 }
 export interface UserWithPasswords extends User {
 	currentPassword: string
@@ -14,10 +15,11 @@ export interface UserWithPasswords extends User {
 
 export const defaultUser: User = {
 	_id: "",
-	username: "",
-	permissionLevel: "",
+	username: "NewUser",
+	permissionLevel: "user",
 	browseWikis: [],
-	editWikis: [],
+  editWikis: [],
+  password: "123"
 }
 
 export const defaultUserWithPassword: UserWithPasswords = {

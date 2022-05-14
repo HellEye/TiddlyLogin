@@ -1,12 +1,10 @@
 import react, { useCallback, useContext, useEffect, useState } from "react"
 import { useCookies } from "react-cookie"
 import axios from "axios"
-type UserType = {
-	username: string
-}
+import { User } from "../types"
 
 export type UserContextType = {
-	user?: UserType
+	user?: User
 	login: (username: string, password: string) => void
 	logout: () => void
 }
@@ -23,8 +21,8 @@ type PropType = {
 }
 
 const UserContextProvider = ({ children }: PropType) => {
-	const [user, setUser] = useState<UserType | undefined>(undefined)
-	const [cookies, setCookie, removeCookie] = useCookies(["token"])
+	const [user, setUser] = useState<User | undefined>(undefined)
+	const [cookies] = useCookies(["token"])
 
 	const login = useCallback((username: string, password: string) => {
 		axios

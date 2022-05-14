@@ -2,6 +2,10 @@ export interface DataType {
 	_id: string
 }
 
+export interface DataTypeWithName extends DataType {
+  name: string
+}
+
 type Setter<T> = (value: T) => void
 
 export type AdditionalSetters<T extends DataType> = {

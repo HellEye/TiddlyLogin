@@ -1,7 +1,7 @@
 import React from "react"
 import { Heading, Box, Flex } from "@chakra-ui/react"
 import { Link } from "react-router-dom"
-import { useLocation } from "react-router"
+import { useLocation } from "react-router" 
 type Props = {}
 
 const pages = [
@@ -12,7 +12,8 @@ const pages = [
 ]
 
 type WrapperProps = {
-	current?: boolean
+  current?: boolean
+  children?: React.ReactNode | React.ReactNode[]
 }
 const LinkWrapper: React.FC<WrapperProps> = ({ children, current }) => {
 	return (

@@ -14,7 +14,7 @@ const DivisiblePage = ({
 	right,
 	open,
 	rightWidth = "100%",
-	closeOnOffClick,
+	// closeOnOffClick,
 	onClose,
 }: Props) => {
 	const [isClosing, setIsClosing] = useState(false)
@@ -33,7 +33,7 @@ const DivisiblePage = ({
 			if (closingTimeout.current) window.clearTimeout(closingTimeout.current)
 			setIsClosing(false)
 		}
-	}, [open])
+	}, [onClose, open])
 
 	useEffect(() => {
 		setIsClosing(false)
