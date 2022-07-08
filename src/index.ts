@@ -5,6 +5,7 @@ import { setUpForwarding } from "./forwarding"
 import { createProxyMiddleware } from "http-proxy-middleware"
 import { env } from "process"
 import { errorHandlerMiddleware } from "./utils/errorHandler"
+import { RedisClientType } from "redis"
 require("express-async-errors")
 
 const app = express()
@@ -15,6 +16,7 @@ app.use(cookieParser())
 // app.use(errorHandlerMiddleware)
 connectToMongo()
 // setup(app)
+
 setUpForwarding(app)
 createEndpoints(app)
 /* app.get("/", (req, res) => {

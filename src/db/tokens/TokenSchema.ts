@@ -14,7 +14,6 @@ const getTokenExpireDate = (expireIn: number) => {
 })
 export class Token {
 	readonly _id!: string
-
 	@prop({
 		ref: () => User,
 		type: () => mongoose.Types.ObjectId,

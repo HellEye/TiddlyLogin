@@ -8,7 +8,6 @@ const pages = [
 	{ name: "Home", to: "/" },
 	{ name: "Users", to: "/Users" },
 	{ name: "Wikis", to: "/Wikis" },
-	{ name: "Test Page", to: "/testPage" },
 ]
 
 type WrapperProps = {

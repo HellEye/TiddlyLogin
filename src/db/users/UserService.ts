@@ -1,26 +1,23 @@
-import bcrypt from "bcrypt"
-import { Error, QueryWithHelpers } from "mongoose"
+import { Error } from "mongoose"
 import { NotFoundError } from "../../types/Errors"
-import { tokenService, DAY_IN_MILLISECONDS } from "../tokens"
 import { Users } from ".."
-import { User } from "."
-import { CookieOptions, Request, Response } from "express"
 import { PermissionLevel, userAuthService } from "."
 import { AccessPermissionLevel } from "./UserAuthService"
 import { BadRequestError, UnauthorizedError } from "../../types/Errors"
+import redis from "../../cache/redis"
 
 type UpdateUserInput = {
 	_id: string
 	username?: string
 	newPassword?: string
 	currentPassword?: string
-	permissionLevel?: string
+	permissionLevel?: PermissionLevel
 	browseWikis?: string[]
 	editWikis?: string[]
 }
 class UserService {
 	async getAllUsers() {
-		return await Users.find({})
+		return await Users.find({}, { password: 0 })
 	}
 
 	async updateUser(
@@ -40,26 +37,25 @@ class UserService {
 			if (!userToUpdate.isPasswordMatching(user.currentPassword))
 				throw new UnauthorizedError("Provided password doesn't match")
 		}
-		const updated = await Users.findByIdAndUpdate(
-			_id,
-			{
-				$set: {
-					username: user.username,
-					password: user.newPassword,
-					permissionLevel: user.permissionLevel,
-					browseWikis: user.browseWikis,
-					editWikis: user.editWikis,
-				},
-			},
-			{ new: true }
-		)
-		console.log("Updated user: ", updated)
-		return updated
+		userToUpdate.username = user.username
+		userToUpdate.permissionLevel = user.permissionLevel
+		userToUpdate.browseWikis = user.browseWikis
+		userToUpdate.editWikis = user.editWikis
+		if (user.newPassword) userToUpdate.password = user.newPassword
+
+		await userToUpdate.save()
+    userToUpdate.password = undefined
+		redis.set(`user:${_id}`, JSON.stringify(userToUpdate), { EX: 300 })
+		return userToUpdate
 	}
 
 	async getUser(_id: string) {
 		try {
-			const out = await Users.findOne({ _id }, { password: 0 })
+			const redisUser = JSON.parse(await redis.get(`user:${_id}`))
+      const out = redisUser || (await Users.findOne({ _id }, { password: 0 }))
+			if (!redisUser && out) {
+				redis.set(`user:${_id}`, JSON.stringify(out), { EX: 300 })
+			}
 			if (!out) throw new Error.DocumentNotFoundError("Document not found")
 			return out
 		} catch (e) {
@@ -68,7 +64,7 @@ class UserService {
 		}
 	}
 	async getUserList() {
-		return await Users.find({}, { _id: 1 })
+		return await Users.find({}, { _id: 1, password: 0 })
 	}
 	async createUser(
 		username: string,

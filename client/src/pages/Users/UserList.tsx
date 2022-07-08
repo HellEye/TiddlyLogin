@@ -1,5 +1,5 @@
 import UserField from "./UserField/UserField"
-import { User } from "../../types"
+import { User, Wiki } from "../../types"
 import { Button, Flex, Heading, Select } from "@chakra-ui/react"
 import Page from "../../components/Page/Page"
 import DivisiblePage from "../../components/Layout/DivisiblePage"
@@ -15,7 +15,7 @@ type Props = {}
 
 const permissionLevels = ["admin", "user", "guest"]
 
-const inputFields: InputFields<UserWithPasswords> = {
+const inputFields: InputFields<UserWithPasswords, Wiki> = {
 	tabs: (user) =>
 		user?.permissionLevel === "admin"
 			? ["User", "Browse permissions", "Edit permissions"]
@@ -40,13 +40,15 @@ const inputFields: InputFields<UserWithPasswords> = {
       tab: "Browse permissions",
 			array: true,
 			arrayFrom: ["wiki"],
-			arrayLinkExclude: ["editWikis", "browseWikis"],
+      arrayLinkExclude: ["editWikis", "browseWikis"],
+      arrayLabel: "name"
 		}),
 		field("editWikis", {
 			tab: "Edit permissions",
 			array: true,
 			arrayFrom: ["wiki"],
-			arrayLinkExclude: ["editWikis", "browseWikis"],
+      arrayLinkExclude: ["editWikis", "browseWikis"],
+      arrayLabel: "name"
 		}),
 	],
 }
@@ -84,7 +86,8 @@ const UserList = (props: Props) => {
 							fields={inputFields}
 							queryKey="user"
 							addIdToQuery
-							defaultValue={defaultUserWithPassword}
+              defaultValue={defaultUserWithPassword}
+              invalidate={["user"]}
 							data={editIndex > -1 ? data?.[editIndex] : undefined}
 							onClose={() => setEditIndex(-1)}
 						/>

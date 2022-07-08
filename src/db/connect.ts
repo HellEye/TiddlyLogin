@@ -1,4 +1,5 @@
 import { connect, set } from "mongoose"
+import { createClient } from "redis"
 const MONGO_PORT =27017
 const connectToMongo = () => {
 	connect(`mongodb://db:${MONGO_PORT}/wikiUsers`)
@@ -11,4 +12,4 @@ const connectToMongo = () => {
 		})
 }
 
-export default connectToMongo
+export {connectToMongo}

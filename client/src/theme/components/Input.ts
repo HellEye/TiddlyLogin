@@ -44,23 +44,43 @@ const Menu = {
 	},
 	variants: {
 		base: {
-      list: {
-        border: "1px solid",
-        borderColor: "accent.500",
+			list: {
+				border: "1px solid",
+				borderColor: "accent.500",
 				bgColor: "bg.500",
-      },
-      item: {
-        bg: "bg.500",
-        bgColor: "bg.500",
-        _hover: {
-          bgColor: "bg.600"
-        },
-        _active: {
-          bgColor: "bg.700"
-        }
-      }
+			},
+			item: {
+				bg: "bg.500",
+				bgColor: "bg.500",
+				_hover: {
+					bgColor: "bg.600",
+				},
+				_active: {
+					bgColor: "bg.700",
+				},
+			},
+		},
+		headerDropdown: {
+			item: {
+				border: "none",
+				shadow: "none",
+				fontWeight: "bold",
+				_hover: {
+					bgColor: "bg.400",
+				},
+				_active: {
+					bgColor: "bg.300",
+				},
+				_focus: {
+					bgColor: "bg.500",
+				},
+				px: "5",
+				py: "2",
+			},
 		},
 	},
 }
+
+
 
 export { Input, Select, Textarea, Menu }

@@ -5,12 +5,16 @@ import { DataType, User } from "../../types"
 import { InputFieldsType } from "../../util/textField"
 
 type Props<T extends DataType> = {
-	f: InputFieldsType<T>
+	f: InputFieldsType<T, any>
 	data: T
 	user?: User
 }
 
-function FormMapField<T extends DataType>({ f, data, user }: Props<T>) {
+function FormMapField<T extends DataType>({
+	f,
+	data,
+	user,
+}: Props<T>) {
 	if (!f.shouldDisplay(data, user)) return null
 	return (
 		<FormControl key={f.name} display="flex" flexDir="column" alignItems="left">

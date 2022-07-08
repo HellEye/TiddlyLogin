@@ -10,6 +10,7 @@ import { QueryClient, QueryClientProvider } from "react-query"
 import { ReactQueryDevtools } from "react-query/devtools"
 import { queryFnGet } from "./util/queryFunctions"
 import Home from "./pages/Home/Home"
+import UserSettings from "./pages/UserSettings/UserSettings"
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -42,9 +43,9 @@ const App = () => {
 	return (
 		<div className="App">
 			<Header />
-      <div className="content">
-        {user?.permissionLevel==="admin" ? <Sidebar /> : ""}
-				
+			<div className="content">
+				{user?.permissionLevel === "admin" ? <Sidebar /> : ""}
+
 				{/* Landing page */}
 				{!user ? (
 					<Login />
@@ -54,6 +55,7 @@ const App = () => {
 						<Route path="/users" element={<UserList />} />
 						<Route path="/wikis" element={<WikiList />} />
 						<Route path="/testPage" element={<TestPage />} />
+						<Route path="/userSettings" element={<UserSettings />} />
 					</Routes>
 				)}
 			</div>

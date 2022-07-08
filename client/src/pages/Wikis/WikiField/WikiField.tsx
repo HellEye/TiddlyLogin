@@ -26,7 +26,7 @@ const WikiField = ({ wiki, onSelectForEdit }: Props) => {
 			}}
 		>
 			<Heading size="md">{wiki.name}</Heading>
-			<Hide below="container.md">
+      <Hide below="1550px">
 				<Heading size="sm"> at {wiki.address} </Heading>
 			</Hide>
 			<Button w="5rem" onClick={onSelectForEdit}>

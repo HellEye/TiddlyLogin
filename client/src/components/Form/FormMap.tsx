@@ -18,9 +18,9 @@ import { QueryKey } from "react-query"
 import { useUserContext } from "../../context/UserContext"
 import { useEffect, useRef } from "react"
 import FormMapField from "./FormMapField"
-import FormMapArrayField from './FormMapArrayField';
-type Props<T extends DataType> = {
-	fields: InputFields<T>
+import FormMapArrayField from "./FormMapArrayField"
+type Props<T extends DataType, A extends DataType> = {
+	fields: InputFields<T, A>
 	queryKey: QueryKey
 	data?: Partial<T>
 	invalidate?: QueryKey[]
@@ -29,7 +29,7 @@ type Props<T extends DataType> = {
 	addIdToQuery?: boolean
 }
 /* eslint react/jsx-uses-react: 0 */
-function FormMap<T extends DataType>({
+function FormMap<T extends DataType, A extends DataType>({
 	fields,
 	queryKey,
 	defaultValue,
@@ -37,7 +37,7 @@ function FormMap<T extends DataType>({
 	invalidate,
 	onClose,
 	addIdToQuery,
-}: Props<T>) {
+}: Props<T, A>) {
 	const { user } = useUserContext()
 	const formikRef = useRef<FormikProps<T>>(null)
 	const makeQueryKey = () => {
@@ -67,7 +67,7 @@ function FormMap<T extends DataType>({
 				console.log("values: ", values)
 				await mutateAsync(values)
 				if (onClose) onClose()
-      }}
+			}}
 		>
 			{({ handleSubmit, submitForm, resetForm, setFieldValue }) => (
 				<form onSubmit={handleSubmit}>
@@ -100,16 +100,13 @@ function FormMap<T extends DataType>({
 										<Flex direction="column" gap="1em" align="flex-start">
 											{fields.fields.map((f) => {
 												// console.log(f.name, f.shouldDisplay({...defaultValue, ...data}, user))
-                        if (f.tab && f.tab !== tab) return ""
-                        if (f.array) return (<FormMapArrayField
-                          f={f}
-                          setFieldValue={setFieldValue}
-                          key={f.name}
-                        />)
+												if (f.tab && f.tab !== tab) return ""
+												if (f.array)
+													return <FormMapArrayField f={f} key={f.name} />
 												return (
 													<FormMapField
-                            f={f}
-                            key={f.name}
+														f={f}
+														key={f.name}
 														user={user}
 														data={{ ...defaultValue, ...data }}
 													/>

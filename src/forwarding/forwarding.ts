@@ -28,9 +28,14 @@ const getSubdomain = (hostname) => {
 const addToCache = async (cacheName: string, key: string, value: string) => {}
 
 const getData = async (wikiName: string, token: string) => {
-	const wiki = await wikiService.findWikiByName(wikiName)
+  const redisWiki:Wiki = JSON.parse(await redis.get(`wiki:${wikiName}`))
+  const wiki = redisWiki || await wikiService.findWikiByName(wikiName)
+  if (!redisWiki && wiki) {
+    redis.set(`wiki:${wikiName}`, JSON.stringify(wiki))
+  }
 	if (!wiki)
-		throw new NotFoundError(`Wiki with name ${wikiName} not found`, "Wiki")
+    throw new NotFoundError(`Wiki with name ${wikiName} not found`, "Wiki")
+  
 	const user = await userAuthService.isUserAllowed(
 		token,
 		AccessPermissionLevel.wikiBrowser,
@@ -59,9 +64,9 @@ const makeProxy = async (
 		proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
 			if (
 				user.permissionLevel === PermissionLevel.admin ||
-				user.editWikis.find(({ _id }) => _id === wiki._id)
+				user.editWikis.find((_id) => _id === wiki._id)
 			) {
-				proxyReqOpts.headers[`wikiAuthHeader`] = "magic header"
+				proxyReqOpts.headers[`wikiAuthHeader`] = user.username
 			}
 			return proxyReqOpts
 		},

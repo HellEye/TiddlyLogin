@@ -2,13 +2,18 @@ import { Tokens } from ".."
 import { User } from "../users"
 import { randomBytes } from "crypto"
 import { Token } from "./TokenSchema"
-import { Error } from "mongoose"
+import { Error, Document } from 'mongoose';
 import { NotFoundError } from "../../types/Errors"
 import util from "util"
+import redis from "../../cache/redis"
 class TokenService {
 	async findToken(token: string) {
-		try {
-      const tokenObj = await Tokens.findOne({ token })?.populate<{ user: User }>("user")
+    try {
+      const redisToken = JSON.parse(await redis.get(`token:${token}`))
+      const tokenObj = redisToken || await Tokens.findOne({ token })?.populate<{ user: User }>("user")
+      if (!redisToken && tokenObj) {
+        redis.set(`token:${token}`, JSON.stringify(tokenObj._doc), {EX:300})
+      }
       if (!tokenObj) {
 				throw new NotFoundError("errors.tokenNotFound", "Token")
       }
@@ -21,7 +26,7 @@ class TokenService {
 	}
 
 	async createToken(userId: string, expireIn: number) {
-		const token = randomBytes(24).toString("hex")
+    const token = randomBytes(24).toString("hex")
 		return await Tokens.create({ user: userId, token, expireIn })
 	}
 
@@ -37,7 +42,8 @@ class TokenService {
 	}
 
 	async removeToken(token: string) {
-		try {
+    try {
+      redis.del(`token:${token}`)
 			await Tokens.deleteOne({ token })
 		} catch (e) {
 			if (e instanceof Error.DocumentNotFoundError)

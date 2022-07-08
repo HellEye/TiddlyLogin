@@ -1,24 +1,42 @@
 import { Checkbox, Input, Select, Textarea } from "@chakra-ui/react"
 import { DataType, User } from "../types"
-import { QueryKey } from 'react-query';
+import { QueryKey } from "react-query"
 
+type StringFieldsOfType<T extends DataType, Filter = string> =
+	| Exclude<
+			keyof Pick<
+				T,
+				{
+					[K in keyof T]: T[K] extends Filter ? K : never
+				}[keyof T]
+			>,
+			undefined
+	  >
+	| "_id"
 
-export type InputFieldsType<T extends DataType> = {
-	name: keyof T & string
+export type InputFieldsType<
+	FieldType extends DataType,
+	ArrayType extends DataType = DataType
+> = {
+	name: keyof FieldType & string
 	type: string
 	text: string
 	component: AcceptedComponents
 	selectOptions: string[]
-  shouldDisplay: (value: T, currentUser?: User) => boolean
-  tab: string
-  array: boolean
-  arrayFrom: QueryKey[]
-  arrayLinkExclude: string[]
+	shouldDisplay: (value: FieldType, currentUser?: User) => boolean
+	tab: string
+	array: boolean
+	arrayFrom: QueryKey[]
+	arrayLinkExclude: string[]
+	arrayLabel: StringFieldsOfType<ArrayType>
 }
 
-export type InputFields<T extends DataType> = {
-  tabs?: string[] | ((currentUser?: User)=>string[])
-  fields: InputFieldsType<T>[]
+export type InputFields<
+	FieldType extends DataType,
+	ArrayType extends DataType = DataType
+> = {
+	tabs?: string[] | ((currentUser?: User) => string[])
+	fields: InputFieldsType<FieldType, ArrayType>[]
 }
 
 type AcceptedComponents =
@@ -27,50 +45,59 @@ type AcceptedComponents =
 	| typeof Checkbox
 	| typeof Textarea
 
-type OptionsObject<T extends DataType> = {
+type OptionsObject<FieldType extends DataType, ArrayType extends DataType> = {
 	type?: string
 	component?: AcceptedComponents
 	selectOptions?: string[]
-  shouldDisplay?: boolean | ((value: T, currentUser?: User) => boolean)
-  tab?: string
-  array?: boolean
-  arrayFrom?: QueryKey[]
-  arrayLinkExclude?: string[]
+	shouldDisplay?: boolean | ((value: FieldType, currentUser?: User) => boolean)
+	tab?: string
+	array?: boolean
+	arrayFrom?: QueryKey[]
+	arrayLinkExclude?: string[]
+	arrayLabel?: StringFieldsOfType<ArrayType>
 }
 
-function defaultOptions<T extends DataType>(): Required<OptionsObject<T>> {
+function defaultOptions<
+	FieldType extends DataType,
+	ArrayType extends DataType = DataType
+>(): Required<OptionsObject<FieldType, ArrayType>> {
+	// const test2: StringFieldsOfType<ArrayType>
 	return {
 		type: "text",
 		component: Input,
 		selectOptions: [],
-    shouldDisplay: true,
-    tab: "",
-    array: false,
-    arrayFrom: [],
-    arrayLinkExclude: []
+		shouldDisplay: true,
+		tab: "",
+		array: false,
+		arrayFrom: [],
+		arrayLinkExclude: [],
+		arrayLabel: "_id",
 	}
 }
-export const field = <T extends DataType>(
-	name: keyof T & string,
-	options?: OptionsObject<T>
-): InputFieldsType<T> => {
+export const field = <
+	FieldType extends DataType,
+	ArrayType extends DataType = DataType
+>(
+	name: keyof FieldType & string,
+	options?: OptionsObject<FieldType, ArrayType>
+): InputFieldsType<FieldType, ArrayType> => {
 	const newOptions = {
 		...defaultOptions(),
 		...options,
 	}
-	const shouldDisplay = (value: T, currentUser?: User): boolean => {
+	const shouldDisplay = (value: FieldType, currentUser?: User): boolean => {
 		if (options?.shouldDisplay)
 			return typeof options.shouldDisplay === "function"
 				? options.shouldDisplay(value, currentUser)
 				: options.shouldDisplay
 		return true
-  }
-  
+	}
+
 	const splitText = name.split(RegExp("(?=[A-Z])")).join(" ")
 	return {
 		name,
 		text: splitText.charAt(0).toUpperCase() + splitText.slice(1),
-    ...newOptions,
-    shouldDisplay
+		...newOptions,
+		shouldDisplay,
 	}
 }

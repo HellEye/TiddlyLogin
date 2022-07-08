@@ -7,31 +7,21 @@ import { InputFieldsType } from "../../util/textField"
 import { Field } from "formik"
 import FormSelect from "./FormSelect"
 
-type Props<T extends DataType> = {
-	f: InputFieldsType<T>
-  setFieldValue: (field: string, value: any, shouldValidate?: boolean | undefined) => void
+type Props<T extends DataType, A extends DataType> = {
+	f: InputFieldsType<T, A>
 }
 
-function FormMapArrayField<T extends DataType>({ f, setFieldValue }: Props<T>) {
-	const { data: fromData } = useQuery<DataTypeWithName[]>(f.arrayFrom)
+function FormMapArrayField<T extends DataType, A extends DataType>({
+	f,
+}: Props<T, A>) {
+	const { data: fromData } = useQuery<A[]>(f.arrayFrom)
 	return (
 		<FormControl>
 			<FormLabel mb="0" w="15rem" htmlFor={f.name} fontSize="smaller">
 				{f.text}
 			</FormLabel>
 
-			<Field
-        as={FormSelect}
-        f={f}
-        name={f.name}
-        id={f.name}
-        setFieldValue={setFieldValue}
-				//TODO style this awful dropdown, probably in theme
-				data={fromData?.map((v) => ({
-					label: v.name,
-					value: v._id,
-				}))}
-			/>
+			<Field as={FormSelect} f={f} data={fromData} name={f.name} id={f.name} />
 		</FormControl>
 	)
 }

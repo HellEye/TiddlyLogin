@@ -12,6 +12,7 @@ import {
 import { ArrowDownIcon } from "@chakra-ui/icons"
 import React, { useState } from "react"
 import { useUserContext } from "../../context/UserContext"
+import { Link } from "react-router-dom"
 
 type Props = {}
 
@@ -43,7 +44,7 @@ const Header = (props: Props) => {
 					</Text>
 				</Box>
 				{user?.username ? (
-					<Menu>
+					<Menu variant="headerDropdown">
 						<MenuButton
 							onClick={(e) => {
 								setMenuOpen((prevState) => !prevState)
@@ -59,25 +60,10 @@ const Header = (props: Props) => {
 							aria-label={"Open panel"}
 						/>
 						<MenuList bgColor="bg.500" p="2 0" borderColor="accent.400">
-							<MenuItem
-								border="none"
-								shadow="none"
-								fontWeight="bold"
-								_hover={{
-									bgColor: "bg.400",
-								}}
-								_active={{
-									bgColor: "bg.300",
-								}}
-								_focus={{
-									bgColor: "bg.500",
-								}}
-								px="5"
-								py="2"
-								onClick={logout}
-							>
-								Logout
+							<MenuItem as={Link} to="/userSettings">
+								Settings
 							</MenuItem>
+							<MenuItem onClick={logout}>Logout</MenuItem>
 						</MenuList>
 					</Menu>
 				) : (

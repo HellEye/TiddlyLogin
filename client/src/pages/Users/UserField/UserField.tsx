@@ -24,7 +24,7 @@ const UserField = ({ user, onSelectForEdit }: Props) => {
 			}}
 		>
       <Heading size="md">{user.username}</Heading>
-      <Hide below="container.md">
+      <Hide below="1550px">
         <Heading size="sm">{user.permissionLevel}</Heading>
       </Hide>
 			<Button

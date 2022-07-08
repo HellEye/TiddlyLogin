@@ -1,23 +1,28 @@
-import { User, userService, createUserEndpoints, userAuthService } from "./users"
-import {Wiki, wikiService, createWikiEndpoints} from "./wiki"
+import {
+	User,
+	userService,
+	createUserEndpoints,
+	userAuthService,
+} from "./users"
+import { Wiki, wikiService, createWikiEndpoints } from "./wiki"
 import { Token, tokenService } from "./tokens"
-import connectToMongo from "./connect"
-import {Express} from "express"
+import { connectToMongo } from "./connect"
+import { Express } from "express"
 import { getModelForClass } from "@typegoose/typegoose"
 export const Users = getModelForClass(User)
 export const Tokens = getModelForClass(Token)
 export const Wikis = getModelForClass(Wiki)
 
 const createEndpoints = (app: Express) => {
-  createUserEndpoints(app)
-  createWikiEndpoints(app)
+	createUserEndpoints(app)
+	createWikiEndpoints(app)
 }
 
 export {
-  connectToMongo,
-  userService,
-  userAuthService,
-  tokenService,
-  wikiService,
-  createEndpoints
+	connectToMongo,
+	userService,
+	userAuthService,
+	tokenService,
+	wikiService,
+	createEndpoints,
 }
